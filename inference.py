@@ -125,43 +125,55 @@ def _build_user_prompt(obs, task_desc: str, history: List[Dict]) -> str:
 
 # ── Agent loop ────────────────────────────────────────────────────────────────
 
-def get_action(
-    client: OpenAI,
-    obs,
-    task_desc: str,
-    history: List[Dict],
-) -> tuple[Optional[Action], Optional[str]]:
-    """Call the LLM and parse the response into an Action."""
-    user_msg = _build_user_prompt(obs, task_desc, history)
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-    # Keep last 4 turns of history to stay within context
-    messages.extend(history[-4:])
-    messages.append({"role": "user", "content": user_msg})
-
-    response = client.chat.completions.create(
-        model=MODEL_NAME,
-        messages=messages,
-        temperature=TEMPERATURE,
-        max_tokens=MAX_TOKENS,
-    )
-    raw = response.choices[0].message.content or ""
-    history.append({"role": "assistant", "content": raw})
-
-    # Strip markdown fences if the model added them
-    cleaned = raw.strip()
-    if cleaned.startswith("```"):
-        parts = cleaned.split("```")
-        cleaned = parts[1] if len(parts) >= 2 else cleaned
-        if cleaned.startswith("json"):
-            cleaned = cleaned[4:]
-    cleaned = cleaned.strip()
-
+def get_action(client, obs, task_desc, history):
     try:
-        data = json.loads(cleaned)
-        return Action(**data), None
-    except Exception as exc:
-        return None, f"json_parse_error: {exc}"
+        user_msg = _build_user_prompt(obs, task_desc, history)
+        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        messages.extend(history[-4:])
+        messages.append({"role": "user", "content": user_msg})
 
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=messages,
+            temperature=TEMPERATURE,
+            max_tokens=MAX_TOKENS,
+        )
+
+        raw = response.choices[0].message.content or ""
+        history.append({"role": "assistant", "content": raw})
+
+        if len(history) > 8:
+            history = history[-8:]
+
+        cleaned = raw.strip()
+
+        if cleaned.startswith("```"):
+            parts = cleaned.split("```")
+            cleaned = parts[1] if len(parts) >= 2 else cleaned
+            if cleaned.startswith("json"):
+                cleaned = cleaned[4:]
+
+        cleaned = cleaned.strip()
+
+        data = json.loads(cleaned)
+
+        # SAFE validation
+        if data["action_type"] == "write_file":
+            if "file_path" not in data or "file_content" not in data:
+                return None, "invalid_write_file"
+
+        elif data["action_type"] == "run_command":
+            if "command" not in data:
+                return None, "invalid_run_command"
+
+        else:
+            return None, "unknown_action_type"
+
+        return Action(**data), None
+
+    except Exception as e:
+        return None, f"error: {str(e)}"
+    
 
 def run_task(client: OpenAI, task_id: str) -> float:
     env = MonacoOpsEnv(task_id=task_id)
@@ -194,7 +206,10 @@ def run_task(client: OpenAI, task_id: str) -> float:
         )
 
         obs, reward, done, info = env.step(action)
-        final_score = reward.value
+        try:
+            final_score = reward.value
+        except:
+            final_score = 0.0
         rewards.append(final_score)
 
         log_step(step_num, action_label, final_score, done, None)
@@ -204,6 +219,8 @@ def run_task(client: OpenAI, task_id: str) -> float:
 
     success = final_score >= SUCCESS_THRESHOLD
     log_end(success, len(rewards), final_score, rewards)
+    if obs is None:
+        return 0.0
     return final_score
 
 
