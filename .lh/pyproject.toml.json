@@ -1,0 +1,18 @@
+{
+    "sourceFile": "pyproject.toml",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1775656763827,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1775656763827,
+            "name": "Commit-0",
+            "content": "[build-system]\r\nrequires = [\"setuptools>=68\", \"wheel\"]\r\nbuild-backend = \"setuptools.build_meta\"\r\n\r\n[project]\r\nname = \"monaco-ops-openenv\"\r\nversion = \"1.0.0\"\r\nrequires-python = \">=3.11\"\r\ndependencies = [\r\n    \"openenv-core>=0.2.0\",\r\n    \"fastapi>=0.111.0\",\r\n    \"uvicorn[standard]>=0.29.0\",\r\n    \"pydantic>=2.7.0\",\r\n    \"openai>=1.30.0\",\r\n]\r\n\r\n[project.scripts]\r\nserver = \"server.app:main\""
+        }
+    ]
+}
