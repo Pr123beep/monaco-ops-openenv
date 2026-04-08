@@ -1,0 +1,21 @@
+{
+  "name": "monaco-ops-starter",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "clean": "node ./scripts/clean.mjs",
+    "build": "npm run clean && npm run build:app && npm run build:node",
+    "build:app": "tsc -p tsconfig.app.json && node ./scripts/copy-static.mjs",
+    "build:node": "tsc -p tsconfig.node.json",
+    "check": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit",
+    "start": "node ./dist/node/server.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "typescript": "^5.7.0"
+  }
+}

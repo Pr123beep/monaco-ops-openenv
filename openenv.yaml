@@ -1,0 +1,85 @@
+name: monaco-ops
+version: "1.0.0"
+description: >
+  A software-engineering environment where an AI agent must implement a
+  Monaco-powered TypeScript code editor from a partial scaffold. The agent
+  writes TypeScript source files and runs build commands; graders evaluate
+  correctness by spinning up the Node server and hitting its HTTP endpoints.
+  Tasks escalate from a single settings API to a full Monaco editor with
+  AI-completion proxy, worker assets, and tab-strip UI.
+author: monaco-ops-team
+tags:
+  - openenv
+  - code-generation
+  - software-engineering
+  - typescript
+  - real-world
+tasks:
+  - id: settings-api
+    name: "Implement Settings API"
+    description: >
+      Implement GET /api/settings and PUT /api/settings in src/node/server.ts.
+      Settings must be read from and persisted to data/settings.json.
+    difficulty: easy
+    max_steps: 10
+    reward_range: [0.0, 1.0]
+
+  - id: file-api
+    name: "Implement File APIs"
+    description: >
+      Implement GET /api/files, POST /api/files/open, and POST /api/files/save.
+      File operations must be sandboxed to data/workspace/. Path traversal
+      attempts (../) must be rejected with a 4xx response.
+    difficulty: medium
+    max_steps: 15
+    reward_range: [0.0, 1.0]
+
+  - id: full-editor
+    name: "Implement Full Monaco Editor"
+    description: >
+      Implement the complete Monaco editor: settings API, file APIs, AI
+      completion proxy (POST /api/ai/complete), Monaco npm integration with
+      bundled workers, multi-file tab strip (role=tablist), and shared
+      autocorrect helper accessible post-build.
+    difficulty: hard
+    max_steps: 25
+    reward_range: [0.0, 1.0]
+
+observation_space:
+  type: object
+  properties:
+    task_id: {type: string}
+    step: {type: integer}
+    files:
+      type: array
+      items:
+        type: object
+        properties:
+          path: {type: string}
+          content: {type: string}
+    test_results:
+      type: array
+      items:
+        type: object
+        properties:
+          name: {type: string}
+          passed: {type: boolean}
+          message: {type: string}
+    last_action_output: {type: string}
+    last_action_success: {type: boolean}
+    score_so_far: {type: number}
+
+action_space:
+  type: object
+  oneOf:
+    - description: "Write a file to the workspace"
+      properties:
+        action_type: {const: write_file}
+        file_path: {type: string, description: "Relative path e.g. src/node/server.ts"}
+        file_content: {type: string, description: "Complete file contents"}
+    - description: "Run an npm command"
+      properties:
+        action_type: {const: run_command}
+        command: {type: string, enum: ["npm run build", "npm install", "npm ci"]}
+
+reward_range: [0.0, 1.0]

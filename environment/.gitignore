@@ -1,0 +1,4 @@
+dist/
+node_modules/*
+!node_modules/.gitkeep
+npm-debug.log*

@@ -1,0 +1,7 @@
+{
+  "theme": "dark",
+  "smoothTyping": true,
+  "autoCorrect": true,
+  "apiKey": "",
+  "apiBaseUrl": "http://127.0.0.1:9800"
+}
