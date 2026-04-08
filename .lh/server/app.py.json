@@ -1,0 +1,18 @@
+{
+    "sourceFile": "server/app.py",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1775655551413,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1775655551413,
+            "name": "Commit-0",
+            "content": "from uvicorn import run\r\n\r\ndef main():\r\n    run(\"app:app\", host=\"0.0.0.0\", port=7860)"
+        }
+    ]
+}

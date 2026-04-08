@@ -1,0 +1,24 @@
+version = 1
+
+[metadata]
+requires-python = ">=3.11"
+
+[[package]]
+name = "openenv-core"
+version = "0.2.0"
+
+[[package]]
+name = "fastapi"
+version = "0.111.0"
+
+[[package]]
+name = "uvicorn"
+version = "0.29.0"
+
+[[package]]
+name = "pydantic"
+version = "2.7.0"
+
+[[package]]
+name = "openai"
+version = "1.30.0"

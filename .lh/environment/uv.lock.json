@@ -1,0 +1,22 @@
+{
+    "sourceFile": "environment/uv.lock",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1775655877765,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1775655885441,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,1 +1,24 @@\n-uv.lock\n\\ No newline at end of file\n+version = 1\r\n+\r\n+[metadata]\r\n+requires-python = \">=3.11\"\r\n+\r\n+[[package]]\r\n+name = \"openenv-core\"\r\n+version = \"0.2.0\"\r\n+\r\n+[[package]]\r\n+name = \"fastapi\"\r\n+version = \"0.111.0\"\r\n+\r\n+[[package]]\r\n+name = \"uvicorn\"\r\n+version = \"0.29.0\"\r\n+\r\n+[[package]]\r\n+name = \"pydantic\"\r\n+version = \"2.7.0\"\r\n+\r\n+[[package]]\r\n+name = \"openai\"\r\n+version = \"1.30.0\"\n\\ No newline at end of file\n"
+                }
+            ],
+            "date": 1775655877765,
+            "name": "Commit-0",
+            "content": "uv.lock"
+        }
+    ]
+}
